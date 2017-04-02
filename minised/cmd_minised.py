@@ -29,7 +29,7 @@ def minised_on_lines(lines, pattern, replacement, ignore_case, only_replaced_lin
 
     flags = 0
     if ignore_case:
-        flags |= re.I
+        flags |= re.IGNORECASE
 
     rx = re.compile(pattern, flags)
     for line in lines:
@@ -77,7 +77,7 @@ def minised_on_file(filename, outfile, pattern, replace, ignore_case, dry_run):
                 print(line)
 
 
-def main():
+def main(argv):
     parser = argparse.ArgumentParser(description="A minimal sed-like tool")
     parser.add_argument('FILE', action='store', nargs='?',
                         help="files to process")
@@ -97,7 +97,7 @@ def main():
                         help="ignore case")
     parser.add_argument("-v", "--verbose", action='store_true', default=False,
                         help="display the replacements are performed")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.replace is None:
         dry_run = True
@@ -135,8 +135,12 @@ def main():
         minised_on_file(args.FILE, outfile, args.pattern, args.replace, args.ignore_case, dry_run)
 
 
+def main_entrypoint():
+    main(sys.argv)
+
+
 if __name__ == "__main__":
-    main()
+    main_entrypoint()
 
 
 # EOF #

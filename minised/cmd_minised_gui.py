@@ -24,6 +24,7 @@ from tkinter import \
 import argparse
 import fnmatch
 import os
+import sys
 import re
 import tkinter.filedialog
 import tkinter.messagebox
@@ -92,7 +93,7 @@ class MiniSedGUI(Frame):
         self.source_directory = None
         self.target_directory = None
 
-        self.createWidgets()
+        self.create_widgets()
         self.pack(anchor=CENTER, fill=BOTH, expand=1)
 
         self.files_with_content = []
@@ -106,7 +107,7 @@ class MiniSedGUI(Frame):
     def disable_apply(self, *args):
         self.run_btn["state"] = 'disabled'
 
-    def createWidgets(self):
+    def create_widgets(self):
 
         self.directory_frame = Frame(self)
         self.directory_frame.pack(side=TOP, fill=X, expand=0, padx=4, pady=4)
@@ -270,7 +271,7 @@ class MiniSedGUI(Frame):
                                     "Replacements have been performed successfully on the files")
 
 
-def main():
+def main(argv):
     parser = argparse.ArgumentParser(description="A minimal sed-like tool")
     parser.add_argument('DIRECTORY', action='store', nargs='?',
                         help="directory to process")
@@ -290,7 +291,7 @@ def main():
                         help="ignore case")
     parser.add_argument("-v", "--verbose", action='store_true', default=False,
                         help="display the replacements are performed")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     root = tkinter.Tk()
     root.wm_title("minised")
@@ -323,8 +324,12 @@ def main():
     # root.destroy()
 
 
+def main_entrypoint():
+    main(sys.argv)
+
+
 if __name__ == "__main__":
-    main()
+    main_entrypoint()
 
 
 # EOF #
