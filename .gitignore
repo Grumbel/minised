@@ -1,4 +1,5 @@
 *~
+/.pylint/
 /build/
 /dist/
 /minised.egg-info/
