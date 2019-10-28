@@ -48,7 +48,7 @@ def minised_on_lines(lines, pattern, replacement, ignore_case):
 
     flags = 0
     if ignore_case:
-        flags |= re.IGNORE_CASE
+        flags |= re.IGNORECASE
 
     rx = re.compile(pattern, flags)
     for line in lines:
