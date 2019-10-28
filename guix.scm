@@ -26,7 +26,7 @@
 (define-public minised
   (package
     (name "minised")
-    (version "0.1.0")
+    (version "0.3.1")
     (source
      (local-file %source-dir
                  #:recursive? #t
