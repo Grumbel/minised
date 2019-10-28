@@ -14,15 +14,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SOURCES := $(wildcard minised/*.py)
+SOURCES := $(wildcard *.py minised/*.py)
 
-all: flake test # autopep
+default: flake mypy test
+
+all: default autopep pylint
 
 autopep:
-	autopep8  --max-line=120  --in-place $(SOURCES)
+	autopep8 --max-line=120 --in-place --aggressive $(SOURCES)
 
-#test:
-# 	python3 -m unittest discover -s tests/
+test:
+	# python3 -m unittest discover -v -s tests/
+
+mypy:
+	mypy \
+        --incremental \
+	--ignore-missing-imports \
+	--follow-imports skip \
+	--warn-return-any \
+	--warn-unused-ignores \
+	--warn-incomplete-stub \
+	--warn-redundant-casts \
+	$(SOURCES)
 
 flake:
 	flake8 --max-line-length=120 $(SOURCES)
@@ -40,8 +53,10 @@ clean:
 	rm -vrf .pylint/
 
 install:
-	sudo -H pip3 install --force-reinstall --ignore-installed --no-deps .
+	sudo -H pip3 install --force-reinstall --upgrade .
 
-.PHONY: autopep test flake pylint clean
+.PHONY: autopep test flake pylint clean all default run
+
+.NOTPARALLEL: all
 
 # EOF #
