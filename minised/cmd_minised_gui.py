@@ -17,15 +17,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import argparse
+import fnmatch
+import os
+import re
+import sys
+
 from tkinter import \
     Button, Checkbutton, Entry, Frame, Label, LabelFrame, Scrollbar, Text, \
     N, S, W, E, X, CENTER, BOTH, TOP, BOTTOM, LEFT, END, NORMAL, DISABLED, \
     StringVar, BooleanVar
-import argparse
-import fnmatch
-import os
-import sys
-import re
 import tkinter.filedialog
 import tkinter.messagebox
 
@@ -70,6 +71,7 @@ def minised_on_lines(lines, pattern, replacement, ignore_case):
 
 
 class MiniSedConfig:
+
     def __init__(self):
         self.directory = StringVar()
         self.glob = StringVar()
@@ -219,7 +221,7 @@ class MiniSedGUI(Frame):
         self.text.config(state=DISABLED)
 
         self.files_with_content = []
-        for path, dirs, files in os.walk(directory):
+        for path, _, files in os.walk(directory):
             for fname in files:
                 filename = os.path.join(path, fname)
 

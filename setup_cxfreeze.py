@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from cx_Freeze import setup, Executable
-from distutils.core import Extension
+from cx_Freeze import setup, Executable  # pylint: disable=import-error
+
 
 setup(name='minised',
       version='0.1.0',

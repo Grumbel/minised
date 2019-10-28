@@ -108,7 +108,7 @@ def main(argv):
         if args.output:
             raise Exception("can't use --output and recursive together")
 
-        for path, dirs, files in os.walk(args.FILE):
+        for path, _, files in os.walk(args.FILE):
             for fname in files:
                 filename = os.path.join(path, fname)
 
