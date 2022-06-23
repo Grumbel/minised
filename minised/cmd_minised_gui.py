@@ -174,7 +174,6 @@ class MiniSedGUI(Frame):
         self.show_original_checkbutton.pack(side=TOP, anchor=W, expand=0)
 
         self.text_frame = Frame(self)
-        self.text_frame.pack(side=TOP, fill=BOTH, expand=1, pady=4)
 
         self.text_frame.grid_columnconfigure(0, weight=1)
         self.text_frame.grid_rowconfigure(0, weight=1)
@@ -196,6 +195,7 @@ class MiniSedGUI(Frame):
 
         self.confirm_button_frame = Frame(self)
         self.confirm_button_frame.pack(side=BOTTOM, anchor=E)
+        self.text_frame.pack(side=TOP, fill=BOTH, expand=1, pady=4)
 
         self.cancel_btn = Button(self.confirm_button_frame)
         self.cancel_btn["text"] = "Quit"
