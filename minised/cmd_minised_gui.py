@@ -96,7 +96,7 @@ class MiniSedGUI(Frame):
         self.target_directory = None
 
         self.create_widgets()
-        self.pack(anchor=CENTER, fill=BOTH, expand=1)
+        self.layout_widgets()
 
         self.files_with_content = []
 
@@ -110,108 +110,99 @@ class MiniSedGUI(Frame):
         self.run_btn["state"] = 'disabled'
 
     def create_widgets(self):
-
         self.directory_frame = Frame(self)
-        self.directory_frame.pack(side=TOP, fill=X, expand=0, padx=4, pady=4)
-        self.directory_frame.grid_columnconfigure(1, weight=1)
-
         self.directory_label = Label(self.directory_frame, text="Directory:")
-        self.directory_label.grid(column=0, row=0)
-
         self.directory_entry = Entry(self.directory_frame, textvariable=self.cfg.directory)
-        self.directory_entry.grid(column=1, row=0, sticky=W + E)
-        self.directory_entry.bind('<Return>', lambda arg: self.do_preview())
-
         self.directory_button = Button(self.directory_frame, text="Browse")
-        self.directory_button["command"] = lambda: do_ask_directory(self.cfg.directory)
-        self.directory_button.grid(column=2, row=0)
-
         self.glob_label = Label(self.directory_frame, text="Glob:")
-        self.glob_label.grid(column=0, row=1, stick=E)
-
         self.glob_entry = Entry(self.directory_frame, textvariable=self.cfg.glob)
-        self.glob_entry.bind('<Return>', lambda arg: self.do_preview())
-        self.glob_entry.grid(column=1, row=1, sticky=N + S + W)
 
         self.search_replace_frame = Frame(self)
-        self.search_replace_frame.grid_columnconfigure(1, weight=1)
-        self.search_replace_frame.pack(anchor=N, side=TOP, fill=X, expand=0, padx=4, pady=4)
-
         self.search_label = Label(self.search_replace_frame, text="Search:")
-        self.search_label.grid(column=0, row=0, sticky=E)
         self.search_entry = Entry(self.search_replace_frame, textvariable=self.cfg.search)
-        self.search_entry.grid(column=1, row=0, sticky=N + S + W + E)
-        self.search_entry.bind('<Return>', lambda arg: self.do_preview())
-
         self.replace_label = Label(self.search_replace_frame, text="Replace:")
-        self.replace_label.grid(column=0, row=1, sticky=E)
         self.replace_entry = Entry(self.search_replace_frame, textvariable=self.cfg.replace)
-        self.replace_entry.grid(column=1, row=1, sticky=N + S + W + E)
-        self.replace_entry.bind('<Return>', lambda arg: self.do_preview())
 
         self.option_frame = Frame(self)
-        self.option_frame.pack(side=TOP, fill=X, expand=0, pady=4)
-
         self.work_frame = LabelFrame(self.option_frame, text="Options")
-        self.work_frame.pack(side=LEFT, padx=4, pady=4)
-
-        self.ignore_case_checkbutton = Checkbutton(
-            self.work_frame, text="ignore case", variable=self.cfg.ignore_case)
-        self.ignore_case_checkbutton.pack(side=TOP, anchor=W, expand=0)
-
-        self.create_backups_checkbutton = Checkbutton(
-            self.work_frame, text="create backups", variable=self.cfg.create_backups)
-        self.create_backups_checkbutton.pack(side=TOP, anchor=W, expand=0)
+        self.ignore_case_checkbutton = Checkbutton(self.work_frame, text="ignore case", variable=self.cfg.ignore_case)
+        self.create_backups_checkbutton = Checkbutton(self.work_frame, text="create backups", variable=self.cfg.create_backups)
 
         self.preview_frame = LabelFrame(self.option_frame, text="Preview")
-        self.preview_frame.pack(side=LEFT, padx=4, pady=4)
-        self.show_full_content_checkbutton = Checkbutton(
-            self.preview_frame, text="show full content", variable=self.cfg.show_full_content)
-        self.show_full_content_checkbutton.pack(side=TOP, anchor=W, expand=0)
-
-        self.show_original_checkbutton = Checkbutton(
-            self.preview_frame, text="show original", variable=self.cfg.show_original)
-        self.show_original_checkbutton.pack(side=TOP, anchor=W, expand=0)
+        self.show_full_content_checkbutton = Checkbutton(self.preview_frame, text="show full content", variable=self.cfg.show_full_content)
+        self.show_original_checkbutton = Checkbutton(self.preview_frame, text="show original", variable=self.cfg.show_original)
 
         self.text_frame = Frame(self)
-
-        self.text_frame.grid_columnconfigure(0, weight=1)
-        self.text_frame.grid_rowconfigure(0, weight=1)
-
         self.scrollbar = Scrollbar(self.text_frame)
-        self.scrollbar.grid(column=1, row=0, sticky=N + S)
-
         self.text = Text(self.text_frame, yscrollcommand=self.scrollbar.set, width=120, height=20)
+
+        self.confirm_button_frame = Frame(self)
+        self.cancel_btn = Button(self.confirm_button_frame)
+        self.preview_btn = Button(self.confirm_button_frame)
+        self.run_btn = Button(self.confirm_button_frame)
+
+        # Configure
+        self.scrollbar.config(command=self.text.yview)
+
+        self.directory_button["command"] = lambda: do_ask_directory(self.cfg.directory)
 
         self.text.tag_config("file", background="lightgray", foreground="black")
         self.text.tag_config("search", background="lightblue", foreground="black")
         self.text.tag_config("replace", background="orange", foreground="black")
         self.text.tag_config("hollow", foreground="gray")
         self.text.tag_config("highlight", background="lightyellow")
-
         self.text.config(state=DISABLED)
-        self.text.grid(column=0, row=0, sticky=N + S + W + E)
-        self.scrollbar.config(command=self.text.yview)
 
-        self.confirm_button_frame = Frame(self)
+        self.directory_entry.bind('<Return>', lambda arg: self.do_preview())
+        self.glob_entry.bind('<Return>', lambda arg: self.do_preview())
+        self.search_entry.bind('<Return>', lambda arg: self.do_preview())
+        self.replace_entry.bind('<Return>', lambda arg: self.do_preview())
+
+        self.cancel_btn["text"] = "Quit"
+        self.cancel_btn["command"] = self.quit
+
+        self.preview_btn["text"] = "Preview"
+        self.preview_btn["command"] = self.do_preview
+
+        self.run_btn["text"] = "Apply"
+        self.run_btn["command"] = self.do_execute
+        self.run_btn["state"] = 'disabled'
+
+    def layout_widgets(self):
+        self.directory_frame.pack(side=TOP, fill=X, expand=0, padx=4, pady=4)
+        self.search_replace_frame.pack(anchor=N, side=TOP, fill=X, expand=0, padx=4, pady=4)
+        self.option_frame.pack(side=TOP, fill=X, expand=0, pady=4)
+        self.work_frame.pack(side=LEFT, padx=4, pady=4)
+        self.ignore_case_checkbutton.pack(side=TOP, anchor=W, expand=0)
+        self.create_backups_checkbutton.pack(side=TOP, anchor=W, expand=0)
+        self.preview_frame.pack(side=LEFT, padx=4, pady=4)
+        self.show_full_content_checkbutton.pack(side=TOP, anchor=W, expand=0)
+        self.show_original_checkbutton.pack(side=TOP, anchor=W, expand=0)
         self.confirm_button_frame.pack(side=BOTTOM, anchor=E)
         self.text_frame.pack(side=TOP, fill=BOTH, expand=1, pady=4)
 
-        self.cancel_btn = Button(self.confirm_button_frame)
-        self.cancel_btn["text"] = "Quit"
-        self.cancel_btn["command"] = self.quit
+        self.directory_frame.grid_columnconfigure(1, weight=1)
+        self.directory_label.grid(column=0, row=0)
+        self.directory_entry.grid(column=1, row=0, sticky=W + E)
+        self.directory_button.grid(column=2, row=0)
+        self.glob_label.grid(column=0, row=1, stick=E)
+        self.glob_entry.grid(column=1, row=1, sticky=N + S + W)
+        self.search_replace_frame.grid_columnconfigure(1, weight=1)
+        self.search_label.grid(column=0, row=0, sticky=E)
+        self.search_entry.grid(column=1, row=0, sticky=N + S + W + E)
+        self.replace_label.grid(column=0, row=1, sticky=E)
+        self.replace_entry.grid(column=1, row=1, sticky=N + S + W + E)
+
+        self.text_frame.grid_columnconfigure(0, weight=1)
+        self.text_frame.grid_rowconfigure(0, weight=1)
+        self.scrollbar.grid(column=1, row=0, sticky=N + S)
+        self.text.grid(column=0, row=0, sticky=N + S + W + E)
+
         self.cancel_btn.grid(column=1, row=0, sticky=S, pady=8, padx=8)
-
-        self.preview_btn = Button(self.confirm_button_frame)
-        self.preview_btn["text"] = "Preview"
-        self.preview_btn["command"] = self.do_preview
         self.preview_btn.grid(column=2, row=0, sticky=S, pady=8, padx=8)
-
-        self.run_btn = Button(self.confirm_button_frame)
-        self.run_btn["text"] = "Apply"
-        self.run_btn["command"] = self.do_execute
         self.run_btn.grid(column=3, row=0, sticky=S, pady=8, padx=8)
-        self.run_btn["state"] = 'disabled'
+
+        self.pack(anchor=CENTER, fill=BOTH, expand=1)
 
     def do_preview(self):
         directory = self.cfg.directory.get()
