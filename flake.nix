@@ -10,20 +10,21 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-      in rec {
-        packages = flake-utils.lib.flattenTree {
+      in {
+        packages = rec {
+          default = minised;
+
           minised = pkgs.python3Packages.buildPythonPackage rec {
             pname = "minised";
             version = "0.1.0";
+
             src = nixpkgs.lib.cleanSource ./.;
-            nativeBuildInputs = with pkgs.python3.pkgs; [
-            ];
-            propagatedBuildInputs = with pkgs.python3.pkgs; [
+
+            propagatedBuildInputs = with pkgs.python3Packages; [
               tkinter
             ];
            };
         };
-        defaultPackage = packages.minised;
       }
     );
 }
